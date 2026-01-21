@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<title>AUS 21</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="https://i.ibb.co/xyz/AUS21-192.png">
+<style>
+body {
+  background: #121212;
+  color: #fff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  justify-content: space-between;
+}
+header {
+  padding: 20px;
+  text-align: center;
+  background: #1f1f1f;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+}
+header h1 {
+  margin: 0;
+  font-size: 28px;
+  letter-spacing: 1px;
+  color: #00ff88;
+}
+#screen {
+  font-size: 22px;
+  min-height: 40px;
+  margin: 15px;
+  text-align: center;
+  transition: all 0.2s ease-in-out;
+}
+.info {
+  margin-top: 5px;
+  font-size: 14px;
+  color: #ccc;
+  text-align: center;
+}
+.keypad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  max-width: 300px;
+  margin: 20px auto;
+}
+button {
+  background: #1f1f1f;
+  color: #fff;
+  border: none;
+  border-radius: 15px;
+  height: 70px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: 0.1s;
+}
+button:active {
+  background: #3a3a3a;
+  transform: scale(0.95);
+}
+footer {
+  text-align: center;
+  padding: 10px;
+  font-size: 12px;
+  color: #888;
+}
+.history {
+  margin-top: 10px;
+  font-size: 12px;
+  color: #aaa;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>AUS 21</h1>
+</header>
+
+<div id="screen"></div>
+
+<div class="info">AUS Kodu: <b>21</b></div>
+<div class="info" id="t9out"></div>
+<div class="info" id="double"></div>
+<div class="info" id="plate"></div>
+<div class="info" id="single"></div>
+<div class="history" id="history"></div>
+
+<div class="keypad">
+  <button onclick="press('A')">2<br>ABC</button>
+  <button onclick="press('D')">3<br>DEF</button>
+  <button onclick="press('G')">4<br>GHI</button>
+  <button onclick="press('J')">5<br>JKL</button>
+  <button onclick="press('M')">6<br>MNO</button>
+  <button onclick="press('P')">7<br>PQRS</button>
+  <button onclick="press('T')">8<br>TUV</button>
+  <button onclick="press('W')">9<br>WXYZ</button>
+  <button onclick="clearAll()">CLR</button>
+</div>
+
+<footer>
+  <div>Instagram: <a href="https://instagram.com/aliugursukun" target="_blank">@aliugursukun</a> | X: <a href="https://x.com/hacibektas" target="_blank">@hacibektas</a></div>
+  <div style="color:#00ff88;font-weight:bold;">�m�r boyu �cretsiz</div>
+</footer>
+
+<script>
+const t9 = {
+  a:2,b:2,c:2,d:3,e:3,f:3,
+  g:4,h:4,i:4,j:5,k:5,l:5,
+  m:6,n:6,o:6,p:7,q:7,r:7,s:7,
+  t:8,u:8,v:8,w:9,x:9,y:9,z:9
+};
+
+const plateTR = {
+  21:"Diyarbak�r (KALDIRILDI)",
+  34:"�stanbul",
+  6:"Ankara",
+  35:"�zmir"
+};
+
+let text = "";
+let nums = "";
+let historyList = [];
+
+function press(letter){
+  // Ses efekti
+  const audio = new Audio("https://www.soundjay.com/buttons/sounds/button-16.mp3");
+  audio.play().catch(()=>{});
+
+  text += letter;
+  nums += t9[letter.toLowerCase()];
+  document.getElementById("screen").innerText = text;
+  document.getElementById("t9out").innerText = "T9: " + nums;
+
+  // �ift hane hesaplama
+  let sum = nums.split('').reduce((a,b)=>a+Number(b),0);
+  let double = sum;
+  while(double > 99){
+    double = double.toString().split('').reduce((a,b)=>a+Number(b),0);
+  }
+  document.getElementById("double").innerText = "�ift Hane: " + double;
+
+  // Plaka
+  document.getElementById("plate").innerText = "Plaka: " + (plateTR[double] || "Enerji Yorumu");
+
+  // Tek hane / u�urlu say�
+  let single = double;
+  while(single > 9){
+    single = single.toString().split('').reduce((a,b)=>a+Number(b),0);
+  }
+  document.getElementById("single").innerText = "U�urlu Say�: " + single + " � G�� / Ak�� / Bilin�";
+
+  // Ge�mi�i kaydet
+  historyList.unshift(text + " � " + single);
+  if(historyList.length > 5) historyList.pop();
+  document.getElementById("history").innerText = "Ge�mi�: " + historyList.join(" | ");
+}
+
+function clearAll(){
+  text = "";
+  nums = "";
+  document.getElementById("screen").innerText = "";
+  document.getElementById("t9out").innerText = "";
+  document.getElementById("double").innerText = "";
+  document.getElementById("plate").innerText = "";
+  document.getElementById("single").innerText = "";
+  historyList = [];
+  document.getElementById("history").innerText = "";
+}
+</script>
+
+</body>
+</html>
